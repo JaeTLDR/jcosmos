@@ -1,4 +1,4 @@
-module dev.azure.com/AndromedaPlatform/libs/_git/jcosmos.git
+module github.com/JaeTLDR/jcosmos
 
 go 1.16
 
