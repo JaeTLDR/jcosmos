@@ -94,6 +94,7 @@ func (c Jcosmos) UseCol(coll string) Jcosmos {
 }
 
 func (c Jcosmos) cosmosRequest(rl, pk, method, body string, headers map[string]string, obj interface{}) error {
+	c.logReq(rl, pk, method, body, headers)
 	client := &http.Client{Timeout: timeoutSeconds * time.Second}
 	req, err := http.NewRequest(strings.ToUpper(method), c.url+rl, strings.NewReader(body))
 	if err != nil {
