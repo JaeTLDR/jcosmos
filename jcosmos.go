@@ -30,7 +30,7 @@ const (
 func LocalInit(host, key, db, collection string, metrics, crossPartition bool, logger *log.Logger) Jcosmos {
 	return Jcosmos{
 		url:                  fmt.Sprintf("https://%s/", host),
-		loglevel:             LogLevelTrace,
+		loglevel:             LogLevelWarn,
 		keytype:              "master",
 		key:                  key,
 		db:                   db,
@@ -44,7 +44,7 @@ func LocalInit(host, key, db, collection string, metrics, crossPartition bool, l
 func EasyInit(host, key, db, collection string) Jcosmos {
 	return Jcosmos{
 		url:                  fmt.Sprintf("https://%s.documents.azure.com:443/", host),
-		loglevel:             LogLevelWarn,
+		loglevel:             LogLevelError,
 		keytype:              "master",
 		key:                  key,
 		db:                   db,
