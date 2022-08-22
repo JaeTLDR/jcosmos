@@ -93,10 +93,10 @@ func (c Jcosmos) UseCol(coll string) Jcosmos {
 	return c
 }
 
-func (c Jcosmos) cosmosRequest(rl, pk, method, body string, headers map[string]string, obj interface{}) error {
+func (c Jcosmos) cosmosRequest(rl, pk, method string, body []byte, headers map[string]string, obj interface{}) error {
 	c.logReq(rl, pk, method, body, headers)
 	client := &http.Client{Timeout: timeoutSeconds * time.Second}
-	req, err := http.NewRequest(strings.ToUpper(method), c.url+rl, strings.NewReader(body))
+	req, err := http.NewRequest(strings.ToUpper(method), c.url+rl, strings.NewReader(string(body)))
 	if err != nil {
 		return err
 	}
@@ -135,7 +135,7 @@ func (c Jcosmos) processResponse(r *http.Response, obj interface{}) error {
 	}
 	return errors.New("UNKNOWN ERROR")
 }
-func (c Jcosmos) generateHeaders(r *http.Request, body, pk, resourceLink string, headers map[string]string) {
+func (c Jcosmos) generateHeaders(r *http.Request, body []byte, pk, resourceLink string, headers map[string]string) {
 	t := time.Now().UTC().Format("Mon, 02 Jan 2006 15:04:05 GMT")
 	if _, ok := headers["Content-Type"]; !ok {
 		r.Header.Add("Content-Type", "application/json")

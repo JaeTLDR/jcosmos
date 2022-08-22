@@ -34,7 +34,7 @@ func getLogLevelLabel(l loglevel) string {
 	}
 }
 
-func (c Jcosmos) logReq(rl, pk, method, body string, headers map[string]string) {
+func (c Jcosmos) logReq(rl, pk, method string, body []byte, headers map[string]string) {
 	var hString string
 	for k, v := range headers {
 		hString += fmt.Sprintf("%s:%s\n", k, v)

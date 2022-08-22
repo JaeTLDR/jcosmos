@@ -5,6 +5,8 @@ import (
 	"reflect"
 )
 
+var emptyByteArr = []byte{}
+
 // database
 type newDatabaseRequest struct {
 	ID string `json:"id"`
@@ -50,6 +52,28 @@ func (qr QueryResponse) ToStruct(t reflect.Type, obj interface{}) {}
 // sprocs
 // functions
 // trigers
+type Trigger struct {
+	ID               string `json:"id"`
+	Body             string `json:"body"`
+	TriggerOperation string `json:"triggerOperation"`
+	TriggerType      string `json:"triggerType"`
+}
+type TriggerResponse struct {
+	ID               string `json:"id"`
+	Body             string `json:"body"`
+	TriggerOperation string `json:"triggerOperation"`
+	TriggerType      string `json:"triggerType"`
+	Rid              string `json:"_rid"`
+	Ts               int64  `json:"_ts"`
+	Self             string `json:"_self"`
+	Etag             string `json:"_etag"`
+}
+type TriggerList struct {
+	Triggers []TriggerResponse `json:"Users"`
+	Count    int               `json:"_count"`
+	Rid      string            `json:"_rid"`
+}
+
 // users
 type newUserRequest struct {
 	ID string `json:"id"`
@@ -70,3 +94,32 @@ type UserResponse struct {
 
 // permissions
 // offers
+type OfferRequest struct {
+	OfferVersion    string       `json:"offerVersion"`
+	Content         OfferContent `json:"content"`
+	Resource        string       `json:"resource"`
+	OfferResourceID string       `json:"offerResourceID"`
+	ID              string       `json:"id"`
+	Rid             string       `json:"_rid"`
+}
+type OfferResponse struct {
+	OfferVersion    string       `json:"offerVersion"`
+	OfferType       string       `json:"offerType"`
+	Content         OfferContent `json:"content"`
+	Resource        string       `json:"resource"`
+	OfferResourceID string       `json:"offerResourceID"`
+	ID              string       `json:"id"`
+	Rid             string       `json:"_rid"`
+	Self            string       `json:"_self"`
+	Etag            string       `json:"_etag"`
+	Ts              int64        `json:"_ts"`
+}
+type OfferContent struct {
+	OfferThroughput int `json:"offerThroughput"`
+}
+
+type ListOfferResponse struct {
+	Offers []OfferResponse `json:"Offers"`
+	Count  int             `json:"_count"`
+	Rid    string          `json:"_rid"`
+}

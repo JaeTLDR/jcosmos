@@ -1,6 +1,7 @@
 package jcosmos
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -12,46 +13,55 @@ const (
 	ErrorDatabaseIDTooLong = "database id is toolong, id must be between 1 and 255 characters"
 )
 
-func (c Jcosmos) CreateDatabase(id string, obj interface{}) error {
-	if len(id) > databsaseIDMaxLength {
+func (c Jcosmos) CreateDatabase(db newDatabaseRequest, obj interface{}) error {
+	if len(db.ID) > databsaseIDMaxLength {
 		return errors.New(ErrorDatabaseIDTooLong)
 	}
-	body := fmt.Sprintf("{\"id\":\"%s\"}", id)
+	body, err := json.Marshal(db)
+	if err != nil {
+		return err
+	}
 	return c.cosmosRequest("/dbs", "", http.MethodPost, body, nil, obj)
 }
-func (c Jcosmos) CreateDatabaseWithThroughput(id string, throughput int, obj interface{}) error {
-	if len(id) > databsaseIDMaxLength {
+func (c Jcosmos) CreateDatabaseWithThroughput(db newDatabaseRequest, throughput int, obj interface{}) error {
+	if len(db.ID) > databsaseIDMaxLength {
 		return errors.New(ErrorDatabaseIDTooLong)
 	}
 	h := map[string]string{
 		"x-ms-offer-throughput": strconv.Itoa(throughput),
 	}
-	body := fmt.Sprintf("{\"id\":\"%s\"}", id)
+	body, err := json.Marshal(db)
+	if err != nil {
+		return err
+	}
 	return c.cosmosRequest("/dbs", "", http.MethodPost, body, h, obj)
 }
-func (c Jcosmos) CreateDatabaseWithAutopilot(id string, max int, obj interface{}) error {
-	if len(id) > databsaseIDMaxLength {
+func (c Jcosmos) CreateDatabaseWithAutopilot(db newDatabaseRequest, max int, obj interface{}) error {
+	if len(db.ID) > databsaseIDMaxLength {
 		return errors.New(ErrorDatabaseIDTooLong)
 	}
 	h := map[string]string{
 		"x-ms-cosmos-offer-autopilot-settings": fmt.Sprintf("{\"maxThroughput\":%d}", max),
 	}
-	body := fmt.Sprintf("{\"id\":\"%s\"}", id)
+	body, err := json.Marshal(db)
+	if err != nil {
+		return err
+	}
 	return c.cosmosRequest("/dbs", "", http.MethodPost, body, h, obj)
 }
 
-func (c Jcosmos) ReadDatabase(id string, resp databaseResponse) error {
-	if len(id) > databsaseIDMaxLength {
+func (c Jcosmos) ReadDatabase(db newDatabaseRequest, resp databaseResponse) error {
+	if len(db.ID) > databsaseIDMaxLength {
 		return errors.New(ErrorDatabaseIDTooLong)
 	}
-	return c.cosmosRequest("/dbs/"+c.db, "", http.MethodPost, "", nil, resp)
+	return c.cosmosRequest("/dbs/"+c.db, "", http.MethodGet, emptyByteArr, nil, resp)
 }
 func (c Jcosmos) ListDatabase(resp databaseResponse) error {
-	return c.cosmosRequest("/dbs", "", http.MethodPost, "", nil, resp)
+	return c.cosmosRequest("/dbs", "", http.MethodGet, emptyByteArr, nil, resp)
 }
-func (c Jcosmos) DeleteDatabase(id string, resp databaseResponse) error {
-	if len(id) > databsaseIDMaxLength {
+func (c Jcosmos) DeleteDatabase(db newDatabaseRequest, resp databaseResponse) error {
+	if len(db.ID) > databsaseIDMaxLength {
 		return errors.New(ErrorDatabaseIDTooLong)
 	}
-	return c.cosmosRequest("/dbs", "", http.MethodPost, "", nil, resp)
+	return c.cosmosRequest("/dbs", "", http.MethodDelete, emptyByteArr, nil, resp)
 }

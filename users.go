@@ -1,8 +1,8 @@
 package jcosmos
 
 import (
+	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 )
 
@@ -11,37 +11,43 @@ const (
 	ErrorUserIDTooLong = "user id is toolong, id must be between 1 and 255 characters"
 )
 
-func (c Jcosmos) CreateUser(id string, user UserResponse) error {
-	if len(id) > userIDMaxLength || len(id) < 1 {
+func (c Jcosmos) CreateUser(user newUserRequest, obj UserResponse) error {
+	if len(user.ID) > userIDMaxLength || len(user.ID) < 1 {
 		return errors.New(ErrorUserIDTooLong)
 	}
-	body := fmt.Sprintf("{\"id\":\"%s\"}", id)
+	body, err := json.Marshal(user)
+	if err != nil {
+		return err
+	}
 
-	return c.cosmosRequest("/dbs/"+c.db+"/users", "", http.MethodPost, body, nil, user)
+	return c.cosmosRequest("/dbs/"+c.db+"/users", "", http.MethodPost, body, nil, obj)
 }
 
-func (c Jcosmos) ReadUser(id string, user UserResponse) error {
-	if len(id) > userIDMaxLength || len(id) < 1 {
+func (c Jcosmos) ReadUser(user newUserRequest, obj UserResponse) error {
+	if len(user.ID) > userIDMaxLength || len(user.ID) < 1 {
 		return errors.New(ErrorUserIDTooLong)
 	}
-	return c.cosmosRequest("/dbs/"+c.db+"/users/"+id, "", http.MethodGet, "", nil, user)
+	return c.cosmosRequest("/dbs/"+c.db+"/users/"+user.ID, "", http.MethodGet, emptyByteArr, nil, obj)
 }
 
-func (c Jcosmos) ListUser(users ListUserResponse) error {
-	return c.cosmosRequest("/dbs/"+c.db+"/users", "", http.MethodGet, "", nil, users)
+func (c Jcosmos) ListUser(obj ListUserResponse) error {
+	return c.cosmosRequest("/dbs/"+c.db+"/users", "", http.MethodGet, emptyByteArr, nil, obj)
 }
 
-func (c Jcosmos) UpdateUser(id string, user UserResponse) error {
-	if len(id) > userIDMaxLength || len(id) < 1 {
+func (c Jcosmos) UpdateUser(user newUserRequest, obj UserResponse) error {
+	if len(user.ID) > userIDMaxLength || len(user.ID) < 1 {
 		return errors.New(ErrorUserIDTooLong)
 	}
-	body := fmt.Sprintf("{\"id\":\"%s\"}", id)
-	return c.cosmosRequest("/dbs/"+c.db+"/users/"+id, "", http.MethodPut, body, nil, user)
+	body, err := json.Marshal(user)
+	if err != nil {
+		return err
+	}
+	return c.cosmosRequest("/dbs/"+c.db+"/users/"+user.ID, "", http.MethodPut, body, nil, obj)
 }
 
-func (c Jcosmos) DeleteUser(id string) error {
-	if len(id) > userIDMaxLength || len(id) < 1 {
+func (c Jcosmos) DeleteUser(user newUserRequest) error {
+	if len(user.ID) > userIDMaxLength || len(user.ID) < 1 {
 		return errors.New(ErrorUserIDTooLong)
 	}
-	return c.cosmosRequest("/dbs/"+c.db+"/users/"+id, "", http.MethodDelete, "", nil, nil)
+	return c.cosmosRequest("/dbs/"+c.db+"/users/"+user.ID, "", http.MethodDelete, emptyByteArr, nil, nil)
 }
