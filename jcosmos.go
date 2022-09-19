@@ -92,7 +92,10 @@ func (c Jcosmos) UseCol(coll string) Jcosmos {
 	c.coll = coll
 	return c
 }
-
+func (c Jcosmos) UseLogLevel(loglevel loglevel) Jcosmos {
+	c.loglevel = loglevel
+	return c
+}
 func (c Jcosmos) cosmosRequest(rl, pk, method string, body []byte, headers map[string]string, obj interface{}) error {
 	c.logReq(rl, pk, method, body, headers)
 	client := &http.Client{Timeout: timeoutSeconds * time.Second}
