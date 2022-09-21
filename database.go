@@ -21,7 +21,8 @@ func (c Jcosmos) CreateDatabase(db newDatabaseRequest, obj interface{}) error {
 	if err != nil {
 		return err
 	}
-	return c.cosmosRequest("/dbs", "", http.MethodPost, body, nil, obj)
+	_, err = c.cosmosRequest("/dbs", "", http.MethodPost, body, nil, obj)
+	return err
 }
 func (c Jcosmos) CreateDatabaseWithThroughput(db newDatabaseRequest, throughput int, obj interface{}) error {
 	if len(db.ID) > databsaseIDMaxLength {
@@ -34,7 +35,8 @@ func (c Jcosmos) CreateDatabaseWithThroughput(db newDatabaseRequest, throughput 
 	if err != nil {
 		return err
 	}
-	return c.cosmosRequest("/dbs", "", http.MethodPost, body, h, obj)
+	_, err = c.cosmosRequest("/dbs", "", http.MethodPost, body, h, obj)
+	return err
 }
 func (c Jcosmos) CreateDatabaseWithAutopilot(db newDatabaseRequest, max int, obj interface{}) error {
 	if len(db.ID) > databsaseIDMaxLength {
@@ -47,21 +49,25 @@ func (c Jcosmos) CreateDatabaseWithAutopilot(db newDatabaseRequest, max int, obj
 	if err != nil {
 		return err
 	}
-	return c.cosmosRequest("/dbs", "", http.MethodPost, body, h, obj)
+	_, err = c.cosmosRequest("/dbs", "", http.MethodPost, body, h, obj)
+	return err
 }
 
 func (c Jcosmos) ReadDatabase(db newDatabaseRequest, resp databaseResponse) error {
 	if len(db.ID) > databsaseIDMaxLength {
 		return errors.New(ErrorDatabaseIDTooLong)
 	}
-	return c.cosmosRequest("/dbs/"+c.db, "", http.MethodGet, emptyByteArr, nil, resp)
+	_, err := c.cosmosRequest("/dbs/"+c.db, "", http.MethodGet, emptyByteArr, nil, resp)
+	return err
 }
 func (c Jcosmos) ListDatabase(resp databaseResponse) error {
-	return c.cosmosRequest("/dbs", "", http.MethodGet, emptyByteArr, nil, resp)
+	_, err := c.cosmosRequest("/dbs", "", http.MethodGet, emptyByteArr, nil, resp)
+	return err
 }
 func (c Jcosmos) DeleteDatabase(db newDatabaseRequest, resp databaseResponse) error {
 	if len(db.ID) > databsaseIDMaxLength {
 		return errors.New(ErrorDatabaseIDTooLong)
 	}
-	return c.cosmosRequest("/dbs", "", http.MethodDelete, emptyByteArr, nil, resp)
+	_, err := c.cosmosRequest("/dbs", "", http.MethodDelete, emptyByteArr, nil, resp)
+	return err
 }

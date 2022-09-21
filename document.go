@@ -7,25 +7,29 @@ import (
 
 func (c Jcosmos) CreateDocument(pk string, body []byte, upsert bool, obj interface{}) error {
 	rl := "dbs/" + c.db + "/colls/" + c.coll + "/docs"
-	return c.cosmosRequest(rl, pk, http.MethodPost, body, map[string]string{"x-ms-documentdb-is-upsert": strconv.FormatBool(upsert)}, obj)
+	_, err := c.cosmosRequest(rl, pk, http.MethodPost, body, map[string]string{"x-ms-documentdb-is-upsert": strconv.FormatBool(upsert)}, obj)
+	return err
 }
 
 func (c Jcosmos) ReadDocument(id, pk string, obj interface{}) error {
 	rl := "dbs/" + c.db + "/colls/" + c.coll + "/docs/" + id
-	return c.cosmosRequest(rl, pk, http.MethodGet, emptyByteArr, nil, obj)
+	_, err := c.cosmosRequest(rl, pk, http.MethodGet, emptyByteArr, nil, obj)
+	return err
 }
 
 func (c Jcosmos) UpdateDocument(id, pk string, body []byte, obj interface{}) error {
 	rl := "dbs/" + c.db + "/colls/" + c.coll + "/docs/" + id
-	return c.cosmosRequest(rl, pk, http.MethodPut, body, nil, obj)
+	_, err := c.cosmosRequest(rl, pk, http.MethodPut, body, nil, obj)
+	return err
 }
 
 func (c Jcosmos) DeleteDocument(id, pk string) error {
 	rl := "dbs/" + c.db + "/colls/" + c.coll + "/docs/" + id
-	return c.cosmosRequest(rl, pk, http.MethodDelete, emptyByteArr, nil, nil)
+	_, err := c.cosmosRequest(rl, pk, http.MethodDelete, emptyByteArr, nil, nil)
+	return err
 }
 
-func (c Jcosmos) XPartitionQueryDocument(body []byte, cont string, obj interface{}) error {
+func (c Jcosmos) XPartitionQueryDocument(body []byte, cont string, obj interface{}) (string, error) {
 	rl := "dbs/" + c.db + "/colls/" + c.coll + "/docs"
 	h := map[string]string{
 		"x-ms-documentdb-isquery":                    "true",
@@ -39,7 +43,7 @@ func (c Jcosmos) XPartitionQueryDocument(body []byte, cont string, obj interface
 	return c.cosmosRequest(rl, "", http.MethodPost, body, h, obj)
 }
 
-func (c Jcosmos) QueryDocument(pk string, body []byte, cont string, obj interface{}) error {
+func (c Jcosmos) QueryDocument(pk string, body []byte, cont string, obj interface{}) (string, error) {
 	rl := "dbs/" + c.db + "/colls/" + c.coll + "/docs"
 	h := map[string]string{
 		"x-ms-documentdb-isquery": "true",
@@ -53,7 +57,7 @@ func (c Jcosmos) QueryDocument(pk string, body []byte, cont string, obj interfac
 	return c.cosmosRequest(rl, pk, http.MethodPost, body, h, obj)
 }
 
-func (c Jcosmos) ListDocument(pk, cont string, obj interface{}) error {
+func (c Jcosmos) ListDocument(pk, cont string, obj interface{}) (string, error) {
 	rl := "dbs/" + c.db + "/colls/" + c.coll + "/docs"
 	h := map[string]string{
 		"x-ms-max-item-count":                        "50",

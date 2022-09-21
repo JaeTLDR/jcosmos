@@ -96,24 +96,24 @@ func (c Jcosmos) UseLogLevel(loglevel loglevel) Jcosmos {
 	c.loglevel = loglevel
 	return c
 }
-func (c Jcosmos) cosmosRequest(rl, pk, method string, body []byte, headers map[string]string, obj interface{}) error {
+func (c Jcosmos) cosmosRequest(rl, pk, method string, body []byte, headers map[string]string, obj interface{}) (string, error) {
 	c.logReq(rl, pk, method, body, headers)
 	client := &http.Client{Timeout: timeoutSeconds * time.Second}
 	req, err := http.NewRequest(strings.ToUpper(method), c.url+rl, strings.NewReader(string(body)))
 	if err != nil {
-		return err
+		return "", err
 	}
 	c.generateHeaders(req, body, pk, rl, headers)
 	if err != nil {
-		return err
+		return "", err
 	}
 	byts, _ := httputil.DumpRequest(req, true)
 	c.log(LogLevelTrace, string(byts))
 	resp, err := client.Do(req)
 	if err != nil {
-		return err
+		return "", err
 	}
-	return c.processResponse(resp, obj)
+	return resp.Header.Get("x-ms-continuation"), c.processResponse(resp, obj)
 }
 func (c Jcosmos) processResponse(r *http.Response, obj interface{}) error {
 	if r.StatusCode >= 400 && r.StatusCode < 500 {

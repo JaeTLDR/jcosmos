@@ -48,11 +48,13 @@ func (c Jcosmos) CreateTrigger(t Trigger, obj TriggerResponse) error {
 	if err != nil {
 		return err
 	}
-	return c.cosmosRequest("dbs/"+c.db+"/colls/"+c.coll+"/triggers", "", http.MethodPost, body, nil, obj)
+	_, err = c.cosmosRequest("dbs/"+c.db+"/colls/"+c.coll+"/triggers", "", http.MethodPost, body, nil, obj)
+	return err
 }
 
 func (c Jcosmos) ListTrigger(obj TriggerList) error {
-	return c.cosmosRequest("dbs/"+c.db+"/colls/"+c.coll+"/triggers", "", http.MethodGet, emptyByteArr, nil, obj)
+	_, err := c.cosmosRequest("dbs/"+c.db+"/colls/"+c.coll+"/triggers", "", http.MethodGet, emptyByteArr, nil, obj)
+	return err
 }
 
 func (c Jcosmos) ReplaceTrigger(t Trigger, obj TriggerResponse) error {
@@ -69,9 +71,11 @@ func (c Jcosmos) ReplaceTrigger(t Trigger, obj TriggerResponse) error {
 	if err != nil {
 		return err
 	}
-	return c.cosmosRequest("dbs/"+c.db+"/colls/"+c.coll+"/triggers/"+t.ID, "", http.MethodPut, body, nil, obj)
+	_, err = c.cosmosRequest("dbs/"+c.db+"/colls/"+c.coll+"/triggers/"+t.ID, "", http.MethodPut, body, nil, obj)
+	return err
 }
 
 func (c Jcosmos) DeleteTrigger(id string) error {
-	return c.cosmosRequest("dbs/"+c.db+"/colls/"+c.coll+"/triggers/"+id, "", http.MethodDelete, emptyByteArr, nil, nil)
+	_, err := c.cosmosRequest("dbs/"+c.db+"/colls/"+c.coll+"/triggers/"+id, "", http.MethodDelete, emptyByteArr, nil, nil)
+	return err
 }
