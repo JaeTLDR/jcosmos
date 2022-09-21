@@ -40,7 +40,8 @@ func (c Jcosmos) XPartitionQueryDocument(body []byte, cont string, obj interface
 	if len(cont) > 0 {
 		h["x-ms-continuation"] = cont
 	}
-	return c.cosmosRequest(rl, "", http.MethodPost, body, h, obj)
+	resp, err := c.cosmosRequest(rl, "", http.MethodPost, body, h, obj)
+	return resp.Header.Get("x-ms-continuation"), err
 }
 
 func (c Jcosmos) QueryDocument(pk string, body []byte, cont string, obj interface{}) (string, error) {
@@ -54,7 +55,8 @@ func (c Jcosmos) QueryDocument(pk string, body []byte, cont string, obj interfac
 	if len(cont) > 0 {
 		h["x-ms-continuation"] = cont
 	}
-	return c.cosmosRequest(rl, pk, http.MethodPost, body, h, obj)
+	resp, err := c.cosmosRequest(rl, pk, http.MethodPost, body, h, obj)
+	return resp.Header.Get("x-ms-continuation"), err
 }
 
 func (c Jcosmos) ListDocument(pk, cont string, obj interface{}) (string, error) {
@@ -67,5 +69,6 @@ func (c Jcosmos) ListDocument(pk, cont string, obj interface{}) (string, error) 
 	if len(cont) > 0 {
 		h["x-ms-continuation"] = cont
 	}
-	return c.cosmosRequest(rl, pk, http.MethodGet, emptyByteArr, h, obj)
+	resp, err := c.cosmosRequest(rl, pk, http.MethodGet, emptyByteArr, h, obj)
+	return resp.Header.Get("x-ms-continuation"), err
 }
