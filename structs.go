@@ -2,7 +2,8 @@ package jcosmos
 
 import (
 	"encoding/json"
-	"reflect"
+	"errors"
+	"strings"
 )
 
 var emptyByteArr = []byte{}
@@ -45,8 +46,54 @@ type QueryResponse struct {
 	Rid       string        `json:"_rid"`
 }
 
+type PatchOp string
+
+const (
+	PatchOpAdd       PatchOp = "add"
+	PatchOpSet       PatchOp = "set"
+	PatchOpReplace   PatchOp = "replace"
+	PatchOpRemove    PatchOp = "remove"
+	PatchOpIncrement PatchOp = "increment"
+)
+
+var allowedPatchOperations []PatchOp = []PatchOp{
+	PatchOpAdd,
+	PatchOpSet,
+	PatchOpReplace,
+	PatchOpRemove,
+	PatchOpIncrement,
+}
+
+type Patch struct {
+	Condition  string           `json:"condition,omitempty"`
+	Operations []PatchOperation `json:"operations"`
+}
+type PatchOperation struct {
+	Op    PatchOp `json:"op"`
+	Path  string  `json:"path"`
+	Value any     `json:"value"`
+}
+
+func (po PatchOperation) validate() error {
+	if inArray(allowedPatchOperations, po.Op) {
+		return errors.New("invalid operation")
+	}
+	if !strings.HasPrefix(po.Path, "/") {
+		return errors.New("path does nto start at root of document")
+	}
+	return nil
+}
+
 // stub to be added later
-func (qr QueryResponse) ToStruct(t reflect.Type, obj interface{}) {}
+// func (qr QueryResponse) ToStruct(obj interface{}) {
+// 	t := reflect.TypeOf(obj)
+// 	tArr := reflect.MakeSlice(t, 0, 1000)
+
+// 	for _, i := range qr.Documents {
+// 		tArr = reflect.Append(tArr, i)
+// 	}
+// 	obj = tArr
+// }
 
 // attachments
 // sprocs

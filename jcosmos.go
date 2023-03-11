@@ -20,10 +20,10 @@ import (
 )
 
 const (
-	jcosmosVersion                  = "0.0.1"
+	JcosmosVersion                  = "0.0.2"
 	timeoutSeconds                  = 9
 	tokenVersion             string = "1.0"
-	userAgent                string = "Jcosmos/" + jcosmosVersion
+	userAgent                string = "Jcosmos/" + JcosmosVersion
 	cosmosDbApiVersionString string = "2015-12-16" //"2018-12-31"
 )
 

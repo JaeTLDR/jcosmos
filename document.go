@@ -1,13 +1,18 @@
 package jcosmos
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 )
 
-func (c Jcosmos) CreateDocument(pk string, body []byte, upsert bool, obj interface{}) error {
+func (c Jcosmos) CreateDocument(pk string, upsert bool, obj interface{}) error {
+	body, err := json.Marshal(obj)
+	if err != nil {
+		return err
+	}
 	rl := "dbs/" + c.db + "/colls/" + c.coll + "/docs"
-	_, err := c.cosmosRequest(rl, pk, http.MethodPost, body, map[string]string{"x-ms-documentdb-is-upsert": strconv.FormatBool(upsert)}, obj)
+	_, err = c.cosmosRequest(rl, pk, http.MethodPost, body, map[string]string{"x-ms-documentdb-is-upsert": strconv.FormatBool(upsert)}, obj)
 	return err
 }
 
@@ -17,9 +22,13 @@ func (c Jcosmos) ReadDocument(id, pk string, obj interface{}) error {
 	return err
 }
 
-func (c Jcosmos) UpdateDocument(id, pk string, body []byte, obj interface{}) error {
+func (c Jcosmos) UpdateDocument(id, pk string, obj interface{}) error {
+	body, err := json.Marshal(obj)
+	if err != nil {
+		return err
+	}
 	rl := "dbs/" + c.db + "/colls/" + c.coll + "/docs/" + id
-	_, err := c.cosmosRequest(rl, pk, http.MethodPut, body, nil, obj)
+	_, err = c.cosmosRequest(rl, pk, http.MethodPut, body, nil, obj)
 	return err
 }
 
@@ -29,7 +38,11 @@ func (c Jcosmos) DeleteDocument(id, pk string) error {
 	return err
 }
 
-func (c Jcosmos) XPartitionQueryDocument(body []byte, cont string, obj interface{}) (string, error) {
+func (c Jcosmos) XPartitionQueryDocument(query Query, cont string, obj interface{}) (string, error) {
+	body, err := query.ToJson()
+	if err != nil {
+		return "", err
+	}
 	rl := "dbs/" + c.db + "/colls/" + c.coll + "/docs"
 	h := map[string]string{
 		"x-ms-documentdb-isquery":                    "true",
@@ -44,7 +57,11 @@ func (c Jcosmos) XPartitionQueryDocument(body []byte, cont string, obj interface
 	return resp.Header.Get("x-ms-continuation"), err
 }
 
-func (c Jcosmos) QueryDocument(pk string, body []byte, cont string, obj interface{}) (string, error) {
+func (c Jcosmos) QueryDocument(pk string, query Query, cont string, obj interface{}) (string, error) {
+	body, err := query.ToJson()
+	if err != nil {
+		return "", err
+	}
 	rl := "dbs/" + c.db + "/colls/" + c.coll + "/docs"
 	h := map[string]string{
 		"x-ms-documentdb-isquery": "true",
@@ -71,4 +88,20 @@ func (c Jcosmos) ListDocument(pk, cont string, obj interface{}) (string, error) 
 	}
 	resp, err := c.cosmosRequest(rl, pk, http.MethodGet, emptyByteArr, h, obj)
 	return resp.Header.Get("x-ms-continuation"), err
+}
+
+func (c Jcosmos) PatchDocument(id, pk string, p Patch, obj interface{}) error {
+	var patchOpErr error
+	for _, po := range p.Operations {
+		patchOpErr = po.validate()
+		if patchOpErr != nil {
+			break
+		}
+	}
+	if patchOpErr != nil {
+		return patchOpErr
+	}
+	rl := "dbs/" + c.db + "/colls/" + c.coll + "/docs"
+	_, err := c.cosmosRequest(rl, pk, http.MethodPatch, emptyByteArr, nil, obj)
+	return err
 }
