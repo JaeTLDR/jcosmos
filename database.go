@@ -13,7 +13,7 @@ const (
 	ErrorDatabaseIDTooLong = "database id is toolong, id must be between 1 and 255 characters"
 )
 
-func (c Jcosmos) CreateDatabase(db newDatabaseRequest, obj interface{}) error {
+func (c Jcosmos) CreateDatabase(db newDatabaseRequest, obj any) error {
 	if len(db.ID) > databsaseIDMaxLength {
 		return errors.New(ErrorDatabaseIDTooLong)
 	}
@@ -24,7 +24,7 @@ func (c Jcosmos) CreateDatabase(db newDatabaseRequest, obj interface{}) error {
 	_, err = c.cosmosRequest("/dbs", "", http.MethodPost, body, nil, obj)
 	return err
 }
-func (c Jcosmos) CreateDatabaseWithThroughput(db newDatabaseRequest, throughput int, obj interface{}) error {
+func (c Jcosmos) CreateDatabaseWithThroughput(db newDatabaseRequest, throughput int, obj any) error {
 	if len(db.ID) > databsaseIDMaxLength {
 		return errors.New(ErrorDatabaseIDTooLong)
 	}
@@ -38,7 +38,7 @@ func (c Jcosmos) CreateDatabaseWithThroughput(db newDatabaseRequest, throughput 
 	_, err = c.cosmosRequest("/dbs", "", http.MethodPost, body, h, obj)
 	return err
 }
-func (c Jcosmos) CreateDatabaseWithAutopilot(db newDatabaseRequest, max int, obj interface{}) error {
+func (c Jcosmos) CreateDatabaseWithAutopilot(db newDatabaseRequest, max int, obj any) error {
 	if len(db.ID) > databsaseIDMaxLength {
 		return errors.New(ErrorDatabaseIDTooLong)
 	}

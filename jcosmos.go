@@ -96,7 +96,7 @@ func (c Jcosmos) UseLogLevel(loglevel loglevel) Jcosmos {
 	c.loglevel = loglevel
 	return c
 }
-func (c Jcosmos) cosmosRequest(rl, pk, method string, body []byte, headers map[string]string, obj interface{}) (*http.Response, error) {
+func (c Jcosmos) cosmosRequest(rl, pk, method string, body []byte, headers map[string]string, obj any) (*http.Response, error) {
 	c.logReq(rl, pk, method, body, headers)
 	client := &http.Client{Timeout: timeoutSeconds * time.Second}
 	req, err := http.NewRequest(strings.ToUpper(method), c.url+rl, strings.NewReader(string(body)))
@@ -115,7 +115,7 @@ func (c Jcosmos) cosmosRequest(rl, pk, method string, body []byte, headers map[s
 	}
 	return resp, c.processResponse(resp, obj)
 }
-func (c Jcosmos) processResponse(r *http.Response, obj interface{}) error {
+func (c Jcosmos) processResponse(r *http.Response, obj any) error {
 	if r.StatusCode >= 400 && r.StatusCode < 500 {
 		c.log(LogLevelError, bodyToStr(r.Body))
 		return errors.New("client error ")

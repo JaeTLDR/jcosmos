@@ -41,9 +41,9 @@ func (q Query) ToJson() ([]byte, error) {
 }
 
 type QueryResponse struct {
-	Documents []interface{} `json:"Documents"`
-	Count     int           `json:"_count"`
-	Rid       string        `json:"_rid"`
+	Documents []any  `json:"Documents"`
+	Count     int    `json:"_count"`
+	Rid       string `json:"_rid"`
 }
 
 type PatchOp string
@@ -85,7 +85,7 @@ func (po PatchOperation) validate() error {
 }
 
 // stub to be added later
-// func (qr QueryResponse) ToStruct(obj interface{}) {
+// func (qr QueryResponse) ToStruct(obj any) {
 // 	t := reflect.TypeOf(obj)
 // 	tArr := reflect.MakeSlice(t, 0, 1000)
 
