@@ -22,14 +22,14 @@ import (
 const (
 	CosmosDBSimulatorKey            = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
 	JcosmosVersion                  = "0.0.2"
-	timeoutSeconds                  = 9
+	timeoutSeconds                  = 20
 	tokenVersion             string = "1.0"
 	userAgent                string = "Jcosmos/" + JcosmosVersion
 	cosmosDbApiVersionString string = "2015-12-16" //"2018-12-31"
 )
 
-func LocalInit(host, key, db, collection string, metrics, crossPartition bool, logger *log.Logger) Jcosmos {
-	return Jcosmos{
+func LocalInit(host, key, db, collection string, metrics, crossPartition bool, logger *log.Logger) *Jcosmos {
+	return &Jcosmos{
 		url:                  fmt.Sprintf("https://%s/", host),
 		loglevel:             LogLevelWarn,
 		keytype:              "master",
@@ -42,8 +42,8 @@ func LocalInit(host, key, db, collection string, metrics, crossPartition bool, l
 		logger:               logger,
 	}
 }
-func EasyInit(host, key, db, collection string) Jcosmos {
-	return Jcosmos{
+func EasyInit(host, key, db, collection string) *Jcosmos {
+	return &Jcosmos{
 		url:                  fmt.Sprintf("https://%s.documents.azure.com:443/", host),
 		loglevel:             LogLevelError,
 		keytype:              "master",
@@ -57,8 +57,8 @@ func EasyInit(host, key, db, collection string) Jcosmos {
 	}
 }
 
-func Init(host, keytype, key, db, collection string, loglevel loglevel, metrics, crossPartition bool, logger *log.Logger) Jcosmos {
-	return Jcosmos{
+func Init(host, keytype, key, db, collection string, loglevel loglevel, metrics, crossPartition bool, logger *log.Logger) *Jcosmos {
+	return &Jcosmos{
 		url:                  fmt.Sprintf("https://%s.documents.azure.com:443/", host),
 		loglevel:             loglevel,
 		keytype:              keytype,
