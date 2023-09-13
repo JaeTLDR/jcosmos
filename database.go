@@ -53,12 +53,13 @@ func (c Jcosmos) CreateDatabaseWithAutopilot(db newDatabaseRequest, max int, obj
 	return err
 }
 
-func (c Jcosmos) ReadDatabase(db newDatabaseRequest, resp databaseResponse) error {
-	if len(db.ID) > databsaseIDMaxLength {
-		return errors.New(ErrorDatabaseIDTooLong)
-	}
+func (c Jcosmos) ReadDatabase(resp databaseResponse) error {
 	_, err := c.cosmosRequest("/dbs/"+c.db, "", http.MethodGet, emptyByteArr, nil, resp)
 	return err
+}
+func (c Jcosmos) HealthCheck() error {
+	x := databaseResponse{}
+	return c.ReadDatabase(x)
 }
 func (c Jcosmos) ListDatabase(resp databaseResponse) error {
 	_, err := c.cosmosRequest("/dbs", "", http.MethodGet, emptyByteArr, nil, resp)
