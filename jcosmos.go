@@ -25,7 +25,7 @@ const (
 	timeoutSeconds                  = 20
 	tokenVersion             string = "1.0"
 	userAgent                string = "Jcosmos/" + JcosmosVersion
-	cosmosDbApiVersionString string = "2015-12-16" //"2018-12-31"
+	cosmosDbApiVersionString string = "2020-07-15" //"2015-12-16" //"2018-12-31"//2020-07-15
 )
 
 func LocalInit(host, key, db, collection string, metrics, crossPartition bool, logger *log.Logger) *Jcosmos {
@@ -97,7 +97,7 @@ func (c Jcosmos) UseLogLevel(loglevel loglevel) Jcosmos {
 	c.loglevel = loglevel
 	return c
 }
-func (c Jcosmos) cosmosRequest(rl, pk, method string, body []byte, headers map[string]string, obj any) (*http.Response, error) {
+func (c Jcosmos) cosmosRequest(rl string, pk []string, method string, body []byte, headers map[string]string, obj any) (*http.Response, error) {
 	c.logReq(rl, pk, method, body, headers)
 	client := &http.Client{Timeout: timeoutSeconds * time.Second}
 	req, err := http.NewRequest(strings.ToUpper(method), c.url+rl, strings.NewReader(string(body)))
@@ -139,15 +139,16 @@ func (c Jcosmos) processResponse(r *http.Response, obj any) error {
 	}
 	return errors.New("UNKNOWN ERROR")
 }
-func (c Jcosmos) generateHeaders(r *http.Request, body []byte, pk, resourceLink string, headers map[string]string) {
+func (c Jcosmos) generateHeaders(r *http.Request, body []byte, pk []string, resourceLink string, headers map[string]string) {
 	t := time.Now().UTC().Format("Mon, 02 Jan 2006 15:04:05 GMT")
 	if _, ok := headers["Content-Type"]; !ok {
 		r.Header.Add("Content-Type", "application/json")
 	}
 
 	r.Header.Add("x-ms-activity-id", uuid.New().String())
-	if pk != "" {
-		r.Header.Add("x-ms-documentdb-partitionkey", "[\""+pk+"\"]")
+	if len(pk) > 0 {
+		pkList, _ := json.Marshal(pk)
+		r.Header.Add("x-ms-documentdb-partitionkey", string(pkList))
 	}
 	r.Header.Add("Authorization", c.generateAuthHeader(r.Method, t, resourceLink))
 	r.Header.Add("Content-Length", strconv.Itoa(len(body)))

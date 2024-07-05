@@ -4,5 +4,6 @@
 !go.mod
 !go.sum
 !readme
+!eg.env
 
 !*/
