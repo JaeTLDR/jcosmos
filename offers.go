@@ -11,12 +11,12 @@ const (
 )
 
 func (c Jcosmos) ReadOffer(rid string, obj OfferResponse) error {
-	_, err := c.cosmosRequest("/dbs/offers/"+rid, "", http.MethodGet, emptyByteArr, nil, obj)
+	_, err := c.cosmosRequest("/dbs/offers/"+rid, nil, http.MethodGet, emptyByteArr, nil, obj)
 	return err
 }
 
 func (c Jcosmos) ListOffer(q Query, obj ListOfferResponse) error {
-	_, err := c.cosmosRequest("/dbs/offers", "", http.MethodPost, emptyByteArr, nil, obj)
+	_, err := c.cosmosRequest("/dbs/offers", nil, http.MethodPost, emptyByteArr, nil, obj)
 	return err
 }
 func (c Jcosmos) QueryOffer(query Query, obj ListOfferResponse) error {
@@ -24,7 +24,7 @@ func (c Jcosmos) QueryOffer(query Query, obj ListOfferResponse) error {
 	if err != nil {
 		return err
 	}
-	_, err = c.cosmosRequest("/dbs/offers", "", http.MethodPost, body, nil, obj)
+	_, err = c.cosmosRequest("/dbs/offers", nil, http.MethodPost, body, nil, obj)
 	return err
 }
 func (c Jcosmos) ReplaceOffer(offer OfferRequest, obj OfferResponse) error {
@@ -40,6 +40,6 @@ func (c Jcosmos) ReplaceOffer(offer OfferRequest, obj OfferResponse) error {
 		return err
 	}
 
-	_, err = c.cosmosRequest("/dbs/offers", "", http.MethodPost, body, nil, obj)
+	_, err = c.cosmosRequest("/dbs/offers", nil, http.MethodPost, body, nil, obj)
 	return err
 }

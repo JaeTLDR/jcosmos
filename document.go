@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func (c Jcosmos) CreateDocument(pk string, upsert bool, obj any) error {
+func (c Jcosmos) CreateDocument(pk []string, upsert bool, obj any) error {
 	body, err := json.Marshal(obj)
 	if err != nil {
 		return err
@@ -16,13 +16,13 @@ func (c Jcosmos) CreateDocument(pk string, upsert bool, obj any) error {
 	return err
 }
 
-func (c Jcosmos) ReadDocument(id, pk string, obj any) error {
+func (c Jcosmos) ReadDocument(id string, pk []string, obj any) error {
 	rl := "dbs/" + c.db + "/colls/" + c.coll + "/docs/" + id
 	_, err := c.cosmosRequest(rl, pk, http.MethodGet, emptyByteArr, nil, obj)
 	return err
 }
 
-func (c Jcosmos) UpdateDocument(id, pk string, obj any) error {
+func (c Jcosmos) UpdateDocument(id string, pk []string, obj any) error {
 	body, err := json.Marshal(obj)
 	if err != nil {
 		return err
@@ -32,7 +32,7 @@ func (c Jcosmos) UpdateDocument(id, pk string, obj any) error {
 	return err
 }
 
-func (c Jcosmos) DeleteDocument(id, pk string) error {
+func (c Jcosmos) DeleteDocument(id string, pk []string) error {
 	rl := "dbs/" + c.db + "/colls/" + c.coll + "/docs/" + id
 	_, err := c.cosmosRequest(rl, pk, http.MethodDelete, emptyByteArr, nil, nil)
 	return err
@@ -53,11 +53,11 @@ func (c Jcosmos) XPartitionQueryDocument(query Query, cont string, obj any) (str
 	if len(cont) > 0 {
 		h["x-ms-continuation"] = cont
 	}
-	resp, err := c.cosmosRequest(rl, "", http.MethodPost, body, h, obj)
+	resp, err := c.cosmosRequest(rl, nil, http.MethodPost, body, h, obj)
 	return resp.Header.Get("x-ms-continuation"), err
 }
 
-func (c Jcosmos) QueryDocument(pk string, query Query, cont string, obj any) (string, error) {
+func (c Jcosmos) QueryDocument(pk []string, query Query, cont string, obj any) (string, error) {
 	body, err := query.ToJson()
 	if err != nil {
 		return "", err
@@ -76,7 +76,7 @@ func (c Jcosmos) QueryDocument(pk string, query Query, cont string, obj any) (st
 	return resp.Header.Get("x-ms-continuation"), err
 }
 
-func (c Jcosmos) ListDocument(pk, cont string, obj any) (string, error) {
+func (c Jcosmos) ListDocument(pk []string, cont string, obj any) (string, error) {
 	rl := "dbs/" + c.db + "/colls/" + c.coll + "/docs"
 	h := map[string]string{
 		"x-ms-max-item-count":                        "50",
@@ -90,7 +90,7 @@ func (c Jcosmos) ListDocument(pk, cont string, obj any) (string, error) {
 	return resp.Header.Get("x-ms-continuation"), err
 }
 
-func (c Jcosmos) PatchDocument(id, pk string, p Patch, obj any) error {
+func (c Jcosmos) PatchDocument(id string, pk []string, p Patch, obj any) error {
 	var patchOpErr error
 	for _, po := range p.Operations {
 		patchOpErr = po.validate()

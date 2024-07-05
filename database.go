@@ -21,7 +21,7 @@ func (c Jcosmos) CreateDatabase(db newDatabaseRequest, obj any) error {
 	if err != nil {
 		return err
 	}
-	_, err = c.cosmosRequest("/dbs", "", http.MethodPost, body, nil, obj)
+	_, err = c.cosmosRequest("/dbs", nil, http.MethodPost, body, nil, obj)
 	return err
 }
 func (c Jcosmos) CreateDatabaseWithThroughput(db newDatabaseRequest, throughput int, obj any) error {
@@ -35,7 +35,7 @@ func (c Jcosmos) CreateDatabaseWithThroughput(db newDatabaseRequest, throughput 
 	if err != nil {
 		return err
 	}
-	_, err = c.cosmosRequest("/dbs", "", http.MethodPost, body, h, obj)
+	_, err = c.cosmosRequest("/dbs", nil, http.MethodPost, body, h, obj)
 	return err
 }
 func (c Jcosmos) CreateDatabaseWithAutopilot(db newDatabaseRequest, max int, obj any) error {
@@ -49,12 +49,12 @@ func (c Jcosmos) CreateDatabaseWithAutopilot(db newDatabaseRequest, max int, obj
 	if err != nil {
 		return err
 	}
-	_, err = c.cosmosRequest("/dbs", "", http.MethodPost, body, h, obj)
+	_, err = c.cosmosRequest("/dbs", nil, http.MethodPost, body, h, obj)
 	return err
 }
 
 func (c Jcosmos) ReadDatabase(resp databaseResponse) error {
-	_, err := c.cosmosRequest("/dbs/"+c.db, "", http.MethodGet, emptyByteArr, nil, resp)
+	_, err := c.cosmosRequest("/dbs/"+c.db, nil, http.MethodGet, emptyByteArr, nil, resp)
 	return err
 }
 func (c Jcosmos) HealthCheck() error {
@@ -62,13 +62,13 @@ func (c Jcosmos) HealthCheck() error {
 	return c.ReadDatabase(x)
 }
 func (c Jcosmos) ListDatabase(resp databaseResponse) error {
-	_, err := c.cosmosRequest("/dbs", "", http.MethodGet, emptyByteArr, nil, resp)
+	_, err := c.cosmosRequest("/dbs", nil, http.MethodGet, emptyByteArr, nil, resp)
 	return err
 }
 func (c Jcosmos) DeleteDatabase(db newDatabaseRequest, resp databaseResponse) error {
 	if len(db.ID) > databsaseIDMaxLength {
 		return errors.New(ErrorDatabaseIDTooLong)
 	}
-	_, err := c.cosmosRequest("/dbs", "", http.MethodDelete, emptyByteArr, nil, resp)
+	_, err := c.cosmosRequest("/dbs", nil, http.MethodDelete, emptyByteArr, nil, resp)
 	return err
 }

@@ -20,7 +20,7 @@ func (c Jcosmos) CreateUser(user newUserRequest, obj UserResponse) error {
 		return err
 	}
 
-	_, err = c.cosmosRequest("/dbs/"+c.db+"/users", "", http.MethodPost, body, nil, obj)
+	_, err = c.cosmosRequest("/dbs/"+c.db+"/users", nil, http.MethodPost, body, nil, obj)
 	return err
 }
 
@@ -28,12 +28,12 @@ func (c Jcosmos) ReadUser(user newUserRequest, obj UserResponse) error {
 	if len(user.ID) > userIDMaxLength || len(user.ID) < 1 {
 		return errors.New(ErrorUserIDTooLong)
 	}
-	_, err := c.cosmosRequest("/dbs/"+c.db+"/users/"+user.ID, "", http.MethodGet, emptyByteArr, nil, obj)
+	_, err := c.cosmosRequest("/dbs/"+c.db+"/users/"+user.ID, nil, http.MethodGet, emptyByteArr, nil, obj)
 	return err
 }
 
 func (c Jcosmos) ListUser(obj ListUserResponse) error {
-	_, err := c.cosmosRequest("/dbs/"+c.db+"/users", "", http.MethodGet, emptyByteArr, nil, obj)
+	_, err := c.cosmosRequest("/dbs/"+c.db+"/users", nil, http.MethodGet, emptyByteArr, nil, obj)
 	return err
 }
 
@@ -45,7 +45,7 @@ func (c Jcosmos) UpdateUser(user newUserRequest, obj UserResponse) error {
 	if err != nil {
 		return err
 	}
-	_, err = c.cosmosRequest("/dbs/"+c.db+"/users/"+user.ID, "", http.MethodPut, body, nil, obj)
+	_, err = c.cosmosRequest("/dbs/"+c.db+"/users/"+user.ID, nil, http.MethodPut, body, nil, obj)
 	return err
 }
 
@@ -53,6 +53,6 @@ func (c Jcosmos) DeleteUser(user newUserRequest) error {
 	if len(user.ID) > userIDMaxLength || len(user.ID) < 1 {
 		return errors.New(ErrorUserIDTooLong)
 	}
-	_, err := c.cosmosRequest("/dbs/"+c.db+"/users/"+user.ID, "", http.MethodDelete, emptyByteArr, nil, nil)
+	_, err := c.cosmosRequest("/dbs/"+c.db+"/users/"+user.ID, nil, http.MethodDelete, emptyByteArr, nil, nil)
 	return err
 }

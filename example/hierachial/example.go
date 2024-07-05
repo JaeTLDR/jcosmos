@@ -21,7 +21,7 @@ func init() {
 		os.Getenv("JCOSMOS_KEY"),
 		os.Getenv("JCOSMOS_DB"),
 		os.Getenv("JCOSMOS_COLL"),
-		jcosmos.LogLevelInfo,
+		jcosmos.LogLevelTrace,
 		false,
 		false,
 		log.Default(),
@@ -31,40 +31,49 @@ func init() {
 type egDoc struct {
 	ID      string `json:"id"`
 	Pk      string `json:"pk"`
+	Pk1     string `json:"pk1"`
+	Pk2     string `json:"pk2"`
 	Message string `json:"message"`
 }
 
 func main() {
 	pk := "MyPK"
+	pks := []string{
+		pk + "",
+		pk + "1",
+		pk + "2",
+	}
 	id := "MYUNIQUEID"
 	doc := egDoc{
 		ID:      id,
-		Pk:      pk,
+		Pk:      pks[0],
+		Pk1:     pks[1],
+		Pk2:     pks[2],
 		Message: "Hello World",
 	}
 	var rDoc egDoc
-	err := cosmosClient.CreateDocument(pk, false, &doc)
+	err := cosmosClient.CreateDocument(pks, false, &doc)
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = cosmosClient.ReadDocument(id, pk, &rDoc)
+	err = cosmosClient.ReadDocument(id, pks, &rDoc)
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println("message is ", rDoc.Message)
 	doc.Message = "updated message"
-	err = cosmosClient.UpdateDocument(id, pk, &doc)
+	err = cosmosClient.UpdateDocument(id, pks, &doc)
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = cosmosClient.ReadDocument(id, pk, &rDoc)
+	err = cosmosClient.ReadDocument(id, pks, &rDoc)
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println("message is ", rDoc.Message)
-	err = cosmosClient.DeleteDocument(id, pk)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// err = cosmosClient.DeleteDocument(id, pks)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 	fmt.Println("done")
 }
