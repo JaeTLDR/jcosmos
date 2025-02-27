@@ -85,17 +85,17 @@ type Jcosmos struct {
 	logger               *log.Logger
 }
 
-func (c Jcosmos) UseDB(db string) Jcosmos {
+func (c Jcosmos) UseDB(db string) *Jcosmos {
 	c.db = db
-	return c
+	return &c
 }
-func (c Jcosmos) UseCol(coll string) Jcosmos {
+func (c Jcosmos) UseCol(coll string) *Jcosmos {
 	c.coll = coll
-	return c
+	return &c
 }
-func (c Jcosmos) UseLogLevel(loglevel loglevel) Jcosmos {
+func (c Jcosmos) UseLogLevel(loglevel loglevel) *Jcosmos {
 	c.loglevel = loglevel
-	return c
+	return &c
 }
 func (c Jcosmos) cosmosRequest(rl string, pk []string, method string, body []byte, headers map[string]string, obj any) (*http.Response, error) {
 	c.logReq(rl, pk, method, body, headers)
